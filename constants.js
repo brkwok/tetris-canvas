@@ -1,9 +1,10 @@
 const KEY = {
 	LEFT: 37,
-	RIGHT: 38,
-	UP: 39,
+	UP: 38,
+	RIGHT: 39,
 	DOWN: 40,
 	Z: 90,
+	SPACE: 32
 };
 
 Object.freeze(KEY);

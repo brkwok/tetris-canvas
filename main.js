@@ -1,19 +1,33 @@
 const moves = {
-	[KEY.LEFT]: (p) => ({ ...p, x: p.x - 1 }),
-	[KEY.RIGHT]: (p) => ({ ...p, x: p.x + 1 }),
-	[KEY.DOWN]: (p) => ({ ...p, y: p.y + 1 }),
-	[KEY.UP]: (p) => board.rotate(p),
+	[KEY.LEFT]: (tetromino) => ({ ...tetromino, x: tetromino.x - 1 }),
+	[KEY.RIGHT]: (tetromino) => ({ ...tetromino, x: tetromino.x + 1 }),
+	[KEY.DOWN]: (tetromino) => ({ ...tetromino, y: tetromino.y + 1 }),
+	[KEY.UP]: (tetromino) => board.rotate(tetromino),
+	[KEY.Z]: (tetromino) => board.reverseRotate(tetromino),
+	[KEY.SPACE]: (tetromino) => ({ ...tetromino, y:tetromino.y + 1})
 };
 
 function handleKeyPress(e) {
 	e.preventDefault();
 
 	if (moves[e.keyCode]) {
-		let p = moves[e.keyCode](board.tetromino);
+		let t = moves[e.keyCode](board.tetromino);
 
-		board.tetromino.move(p);
+		if (e.keyCode === KEY.SPACE) {
+			while (board.valid(t)) {
+				
+				board.tetromino.move(t);
+				t = moves[e.keyCode](board.tetromino);
+			}
+			draw();
+			return;
+		}
 
-		draw();
+		if (board.valid(t)) {
+			board.tetromino.move(t);
+			draw();
+		}
+
 	}
 }
 

@@ -24,8 +24,9 @@ class Tetromino {
 		});
 	}
 
-	move(p) {
-		this.x = p.x;
-		this.y = p.y;
+	move(tetromino) {
+		this.x = tetromino.x;
+		this.y = tetromino.y;
+		this.shape = tetromino.shape;
 	}
 }

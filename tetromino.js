@@ -3,11 +3,9 @@ class Tetromino {
 		this.ctx = ctx;
 		this.color = "blue";
 
-		this.shape = [
-			[2, 0, 0],
-			[2, 2, 2],
-			[0, 0, 0],
-		];
+		const typeId = this.randomize(COLORS.length);
+		this.shape = SHAPES[typeId];
+		this.color = COLORS[typeId];
 
 		this.x = 3;
 		this.y = 0;
@@ -28,5 +26,10 @@ class Tetromino {
 		this.x = tetromino.x;
 		this.y = tetromino.y;
 		this.shape = tetromino.shape;
+	}
+
+	// Make a different randomize function
+	randomize(size) {
+		return Math.floor(Math.random() * size);
 	}
 }

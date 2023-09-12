@@ -12,6 +12,12 @@
 	</head>
 	<body>
 		<div class="grid">
+			<div class="left-column">
+				<div>
+					<h1>HOLD</h1>
+					<canvas id="hold" class="hold"></canvas>
+				</div>
+			</div>
 			<canvas id="board" class="game-board"></canvas>
 			<div class="right-column">
 				<div>
@@ -19,9 +25,12 @@
 					<p>Score: <span id="score">0</span></p>
 					<p>Lines: <span id="lines">0</span></p>
 					<p>Level: <span id="level">0</span></p>
-					<canvas id="next" class="next"></canvas>
+					<div class="next-piece">
+						<span>Next:</span>
+						<canvas id="next" class="next"></canvas>
+					</div>
 				</div>
-				<button onclick="play()" class="play-button">Play</button>
+				<button onclick="play()" id="play-btn" class="play-btn">Play</button>
 			</div>
 		</div>
 		<script type="text/javascript" src="constants.js"></script>

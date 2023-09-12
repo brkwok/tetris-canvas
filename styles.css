@@ -4,7 +4,7 @@
  
 .grid {
   display: grid;
-  grid-template-columns: 320px 200px;
+  grid-template-columns: 200px 320px 200px;
 }
  
 .right-column {
@@ -17,9 +17,13 @@
   border: solid 2px;
 }
  
-.play-button {
+.play-btn {
   background-color: #4caf50;
   font-size: 16px;
   padding: 15px 30px;
   cursor: pointer;
+}
+
+.next-piece > * {
+  padding-top: 2px;
 }

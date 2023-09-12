@@ -1,7 +1,9 @@
 class Board {
-	constructor(ctx, ctxNext) {
+	constructor(ctx, ctxNext, ctxHold) {
 		this.ctx = ctx;
 		this.ctxNext = ctxNext;
+		this.ctxHold = ctxHold;
+		this.holdPiece = null;
 		this._init();
 	}
 
@@ -17,10 +19,11 @@ class Board {
 	}
 
 	reset() {
-		this.grid = this._initBoard();
+		this.board = this._initBoard();
 		this.tetromino = new Tetromino(this.ctx);
 		this.tetromino.setStartingPosition();
 		this.ghost = new Tetromino(this.ctx, this.tetromino);
+		this.getNewPiece();
 	}
 
 	getNewPiece() {
@@ -30,15 +33,10 @@ class Board {
 		this.next.draw();
 	}
 
-	draw() {
-		this.tetromino.draw();
-		this.drawBoard();
-	}
-
 	drawBoard() {
 		this.board.forEach((row, y) => {
 			row.forEach((val, x) => {
-				if (value > 0) {
+				if (val > 0) {
 					this.ctx.fillStyle = COLORS[val];
 					this.ctx.fillRect(x, y, 1, 1);
 				}
@@ -61,6 +59,7 @@ class Board {
 
 		t.shape.forEach((row) => row.reverse());
 
+		this.ghost.shape = t.shape;
 		return t;
 	}
 
@@ -71,6 +70,7 @@ class Board {
 
 		this.transpose(t);
 
+		this.ghost.shape = t.shape;
 		return t;
 	}
 
@@ -120,9 +120,41 @@ class Board {
 			this.tetromino.setStartingPosition();
 			this.ghost = new Tetromino(this.ctx, this.tetromino);
 			this.getNewPiece();
+			hold = true;
 		}
 
 		return true;
+	}
+
+	hold() {
+		const { width, height } = this.ctxHold.canvas;
+		this.ctxHold.clearRect(0, 0, width, height);
+
+		if (!this.holdPiece) {
+			this.holdPiece = this.tetromino;
+			this.holdPiece.x = 0
+			this.holdPiece.y = 0
+			this.holdPiece.shape = SHAPES[this.holdPiece.typeId]
+			this.holdPiece.ctx = this.ctxHold;
+			this.tetromino = this.next;
+			this.tetromino.ctx = this.ctx;
+			this.tetromino.setStartingPosition();
+			this.ghost = new Tetromino(this.ctx, this.tetromino);
+			this.getNewPiece();
+		}	else {
+			let temp = this.holdPiece;
+			this.holdPiece = this.tetromino;
+			this.holdPiece.x = 0
+			this.holdPiece.y = 0
+			this.holdPiece.shape = SHAPES[this.holdPiece.typeId]
+			this.holdPiece.ctx = this.ctxHold;
+			this.tetromino = temp
+			this.tetromino.ctx = this.ctx
+			this.tetromino.setStartingPosition();
+			this.ghost = new Tetromino(this.ctx, this.tetromino);
+		}
+
+		this.holdPiece.draw()
 	}
 
 	clearLines() {
@@ -133,10 +165,37 @@ class Board {
 				lines++;
 				this.board.splice(y, 1);
 
-				this.grid.unshift(Array(COLS).fill(0));
+				this.board.unshift(Array(COLS).fill(0));
 			}
 		});
 
-		// add line and score logic
+		if (lines > 0) {
+			account.score += this.getLineClearPoints(lines);
+			account.lines += lines;
+
+			console.log(this.getLineClearPoints(lines));
+			if (account.lines >= LINES_PER_LEVEL) {
+				account.level++;
+
+				account.lines -= LINES_PER_LEVEL;
+
+				time.level = LEVEL[account.level];
+			}
+		}
+	}
+
+	getLineClearPoints(lines) {
+		const lineClearPoints =
+			lines === 1
+				? POINTS.SINGLE
+				: lines === 2
+				? POINTS.DOUBLE
+				: lines === 3
+				? POINTS.TRIPLE
+				: lines === 4
+				? POINTS.TETRIS
+				: 0;
+
+		return (account.level + 1) * lineClearPoints;
 	}
 }
